@@ -1,0 +1,40 @@
+before:
+  hooks:
+    - go mod tidy
+dist: release
+source:
+  enabled: true
+  name_template: '{{ .ProjectName }}-{{ .Tag }}-source'
+checksum:
+  name_template: '{{ .ProjectName }}-{{ .Tag }}-checksums.txt'
+builds:
+  -
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+      - -X "main.CLIVersion={{ .Tag }}"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm
+      - arm64
+      - 386
+    goarm:
+      - 6
+      - 7
+archives:
+  - format: binary # this removes the tar of the archives, leaving the binaries alone
+    name_template: luet-{{ .Tag }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^Merge pull request'
+release:
+  header: |
+
+    Luet package-browser is a Luet extension that generates static HTML files from a list of repositories.
