@@ -112,7 +112,11 @@ func renderAll(configFile, outputDir, templatesDir string) {
 	if err != nil {
 		panic(fmt.Sprintf("Unmarshal err   #%v ", err))
 	}
-
+	rawData := map[string]interface{}{}
+	err = yaml.Unmarshal(yamlFile, &rawData)
+	if err != nil {
+		panic(fmt.Sprintf("Unmarshal err   #%v ", err))
+	}
 	additionalData := map[string]map[string]string{}
 
 	repos := installer.Repositories{}
@@ -150,6 +154,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 		data["Packages"] = packs
 		data["AdditionalData"] = additionalData
 		data["RepositoryName"] = r.Name
+		data["Config"] = rawData
 		dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "repository.tmpl"))
 		checkErr(err)
 
@@ -197,7 +202,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 				data["PackageCategory"] = c
 				data["PackageName"] = ppn
 				data["Packages"] = pks
-
+				data["Config"] = rawData
 				dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "packages.tmpl"))
 				checkErr(err)
 				str := render(string(dat), data)
@@ -218,7 +223,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 			}
 			data["RepositoryName"] = r.Name
 			data["Package"] = p
-
+			data["Config"] = rawData
 			dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "package.tmpl"))
 			checkErr(err)
 			str := render(string(dat), data)
@@ -243,7 +248,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 			data["PackageCategory"] = c
 			data["PackageName"] = ppn
 			data["Packages"] = pks
-
+			data["Config"] = rawData
 			dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "packages.tmpl"))
 			checkErr(err)
 			str := render(string(dat), data)
@@ -258,6 +263,8 @@ func renderAll(configFile, outputDir, templatesDir string) {
 	data["Repositories"] = Repositories
 	data["AdditionalData"] = additionalData
 	data["Packages"] = allPacks
+	data["Config"] = rawData
+	
 	dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "index.tmpl"))
 	checkErr(err)
 	str := render(string(dat), data)
