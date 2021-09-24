@@ -168,6 +168,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 		checkErr(err)
 
 		ioutil.WriteFile(filepath.Join(outputDir, "badge", r.Name), badge, os.ModePerm)
+		ioutil.WriteFile(filepath.Join(outputDir, "badge", r.Name+".svg"), badge, os.ModePerm)
 
 		// Print all individual categories for the repository
 		// construct cats and allcats
