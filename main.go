@@ -220,6 +220,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 			for _, a := range r.GetIndex() {
 				if a.CompileSpec.GetPackage().GetFingerPrint() == p.GetFingerPrint() {
 					data["Files"] = a.Files
+					data["Artifact"] = a
 				}
 			}
 			data["RepositoryName"] = r.Name
@@ -265,7 +266,7 @@ func renderAll(configFile, outputDir, templatesDir string) {
 	data["AdditionalData"] = additionalData
 	data["Packages"] = allPacks
 	data["Config"] = rawData
-	
+
 	dat, err := ioutil.ReadFile(filepath.Join(templatesDir, "index.tmpl"))
 	checkErr(err)
 	str := render(string(dat), data)
